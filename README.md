@@ -8,5 +8,5 @@ pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https
 # Install other dependencies
 pip install -r requirements.txt
 
-cd experments
+## cd experiments
 python train.py
