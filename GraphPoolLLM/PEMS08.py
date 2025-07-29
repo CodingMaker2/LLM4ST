@@ -155,19 +155,3 @@ CFG.EVAL = EasyDict()
 CFG.EVAL.HORIZONS = [3, 6, 12] # Prediction horizons for evaluation. Default: []
 CFG.EVAL.USE_GPU = True # Whether to use GPU for evaluation. Default: True
 
-'''
-B8-4-64-8-1-24-6
-2025-07-19 16:48:08,532 - easytorch-training - INFO - Evaluate best model on test data for horizon 3, Test MAE: 12.7155, Test MAPE: 8.4594, Test RMSE: 21.4978
-2025-07-19 16:48:08,534 - easytorch-training - INFO - Evaluate best model on test data for horizon 6, Test MAE: 13.5069, Test MAPE: 8.9177, Test RMSE: 23.2624
-2025-07-19 16:48:08,536 - easytorch-training - INFO - Evaluate best model on test data for horizon 12, Test MAE: 14.8536, Test MAPE: 9.8534, Test RMSE: 25.6317
-2025-07-19 16:48:08,639 - easytorch-training - INFO - Result <test>: [test/time: 70.72 (s), test/loss: 13.0424, test/MAE: 13.5392, test/MAPE: 8.9747, test/RMSE: 23.2639]
-2025-07-19 16:48:08,641 - easytorch-training - INFO - Test results saved to checkpoints/GraphLLM/PEMS08_50_12_12/33cd60fc8906d53d9766d1c998747cee/test_results.npz.
-2025-07-19 16:48:08,641 - easytorch-training - INFO - Test metrics saved to checkpoints/GraphLLM/PEMS08_50_12_12/33cd60fc8906d53d9766d1c998747cee/test_metrics.json.
-
-B32-4-32-8-8-24-6:
-2025-07-18 19:25:25,121 - easytorch-training - INFO - Evaluate best model on test data for horizon 3, Test MAE: 12.6984, Test MAPE: 8.3411, Test RMSE: 21.5376
-2025-07-18 19:25:25,123 - easytorch-training - INFO - Evaluate best model on test data for horizon 6, Test MAE: 13.5404, Test MAPE: 8.8584, Test RMSE: 23.3009
-2025-07-18 19:25:25,124 - easytorch-training - INFO - Evaluate best model on test data for horizon 12, Test MAE: 14.8481, Test MAPE: 9.7899, Test RMSE: 25.6048
-2025-07-18 19:25:25,249 - easytorch-training - INFO - Result <test>: [test/time: 71.21 (s), test/loss: 13.0423, test/MAE: 13.5369, test/MAPE: 8.8783, test/RMSE: 23.2685]
-2025-07-18 19:25:25,251 - easytorch-training - INFO - Test results saved to checkpoints/GraphLLM/PEMS08_50_12_12/2c92a96788eda13f277c8368593b8e9e/test_results.npz.
-2025-07-18 19:25:25,251 - easytorch-training - INFO - Test metrics saved to checkpoints/GraphLLM/PEMS08_50_12_12/2c92a96788eda13f277c8368593b8e9e/test_metrics.json.'''
