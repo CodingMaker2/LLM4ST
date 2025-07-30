@@ -38,19 +38,7 @@ def extract_subgraph(x, topk_idx):
 
 
 class AttentionLayer(nn.Module):
-    """Perform attention across the -2 dim (the -1 dim is `model_dim`).
-
-    Make sure the tensor is permuted to correct shape before attention.
-
-    E.g.
-    - Input shape (batch_size, in_steps, num_nodes, model_dim).
-    - Then the attention will be performed across the nodes.
-
-    Also, it supports different src and tgt length.
-
-    But must `src length == K length == V length`.
-
-    """
+ 
 
     def __init__(self, model_dim, num_heads=8, mask=False):
         super().__init__()
@@ -285,13 +273,7 @@ class Featureformer(nn.Module):
 
 
 class GraphLLMdualGateSpbise(nn.Module):
-    """
-        Paper: Time-LLM: Time Series Forecasting by Reprogramming Large Language Models
-        Link: https://arxiv.org/abs/2310.01728
-        Ref Official Code: https://github.com/KimMeen/Time-LLM
-        Venue: ICLR 2024
-        Task: Long-term Time Series Forecasting
-    """
+
     def __init__(self, **model_args):
         super(GraphLLMdualGateSpbise, self).__init__()
         self.task_name = model_args['task_name']
@@ -311,14 +293,12 @@ class GraphLLMdualGateSpbise(nn.Module):
 
 
         if model_args['llm_model'] == 'LLAMA':
-            # self.llama_config = LlamaConfig.from_pretrained('/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/')
             self.llama_config = LlamaConfig.from_pretrained('meta-llama/Meta-Llama-3-8B')
             self.llama_config.num_hidden_layers = model_args['llm_layers']
             self.llama_config.output_attentions = True
             self.llama_config.output_hidden_states = True
             try:
                 self.llm_model = LlamaModel.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=True,
@@ -328,7 +308,6 @@ class GraphLLMdualGateSpbise(nn.Module):
             except EnvironmentError:  # downloads model from HF is not already done
                 print("Local model files not found. Attempting to download...")
                 self.llm_model = LlamaModel.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=False,
@@ -337,7 +316,6 @@ class GraphLLMdualGateSpbise(nn.Module):
                 )
             try:
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/tokenizer.model",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=True
@@ -345,7 +323,6 @@ class GraphLLMdualGateSpbise(nn.Module):
             except EnvironmentError:  # downloads the tokenizer from HF if not already done
                 print("Local tokenizer files not found. Atempting to download them..")
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/tokenizer.model",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=False
@@ -379,7 +356,7 @@ class GraphLLMdualGateSpbise(nn.Module):
                     local_files_only=True,
                     config=self.gpt2_config,
                 )
-            except EnvironmentError:  # downloads the tokenizer from HF if not already done
+            except EnvironmentError:  
                 print("Local tokenizer files not found. Atempting to download them..")
                 self.tokenizer = GPT2Tokenizer.from_pretrained(
                     'gpt2',
@@ -480,15 +457,7 @@ class GraphLLMdualGateSpbise(nn.Module):
 
     def forward(self, history_data: torch.Tensor, future_data: torch.Tensor, batch_seen: int, epoch: int, train: bool,
                 **kwargs) -> torch.Tensor:
-        """
-
-        Args:
-            history_data (Tensor): Input data with shape: [B, L1, N, C]
-            future_data (Tensor): Future data with shape: [B, L2, N, C]
-
-        Returns:
-            torch.Tensor: outputs with shape [B, L2, N, 1]
-        """
+   
         B, T, N, C = history_data.shape
         x_enc = history_data[:, :, :, 0]
         x_feature = self.FE(history_data)
