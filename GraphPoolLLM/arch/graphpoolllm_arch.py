@@ -38,19 +38,7 @@ def extract_subgraph(x, topk_idx):
 
 
 class AttentionLayer(nn.Module):
-    """Perform attention across the -2 dim (the -1 dim is `model_dim`).
-
-    Make sure the tensor is permuted to correct shape before attention.
-
-    E.g.
-    - Input shape (batch_size, in_steps, num_nodes, model_dim).
-    - Then the attention will be performed across the nodes.
-
-    Also, it supports different src and tgt length.
-
-    But must `src length == K length == V length`.
-
-    """
+ 
 
     def __init__(self, model_dim, num_heads=8, mask=False):
         super().__init__()
@@ -285,13 +273,7 @@ class Featureformer(nn.Module):
 
 
 class GraphLLM(nn.Module):
-    """
-        Paper: Time-LLM: Time Series Forecasting by Reprogramming Large Language Models
-        Link: https://arxiv.org/abs/2310.01728
-        Ref Official Code: https://github.com/KimMeen/Time-LLM
-        Venue: ICLR 2024
-        Task: Long-term Time Series Forecasting
-    """
+   
     def __init__(self, **model_args):
         super(GraphLLM, self).__init__()
         self.task_name = model_args['task_name']
@@ -311,14 +293,12 @@ class GraphLLM(nn.Module):
 
 
         if model_args['llm_model'] == 'LLAMA':
-            # self.llama_config = LlamaConfig.from_pretrained('/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/')
             self.llama_config = LlamaConfig.from_pretrained('meta-llama/Meta-Llama-3-8B')
             self.llama_config.num_hidden_layers = model_args['llm_layers']
             self.llama_config.output_attentions = True
             self.llama_config.output_hidden_states = True
             try:
                 self.llm_model = LlamaModel.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=True,
@@ -328,7 +308,6 @@ class GraphLLM(nn.Module):
             except EnvironmentError:  # downloads model from HF is not already done
                 print("Local model files not found. Attempting to download...")
                 self.llm_model = LlamaModel.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=False,
@@ -337,7 +316,6 @@ class GraphLLM(nn.Module):
                 )
             try:
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/tokenizer.model",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=True
@@ -345,7 +323,6 @@ class GraphLLM(nn.Module):
             except EnvironmentError:  # downloads the tokenizer from HF if not already done
                 print("Local tokenizer files not found. Atempting to download them..")
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    # "/mnt/alps/modelhub/pretrained_model/LLaMA/7B_hf/tokenizer.model",
                     'meta-llama/Meta-Llama-3-8B',
                     trust_remote_code=True,
                     local_files_only=False
@@ -546,7 +523,7 @@ class GraphLLM(nn.Module):
         prompt = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=2048).input_ids
         prompt_embeddings = self.llm_model.get_input_embeddings()(prompt.to(x_enc.device))  # (batch, prompt_token, dim)
         st_llm_embeddings = self.llm_model.get_input_embeddings()(input_ids_x_enc)
-        # print(st_llm_embeddings.shape)
+       
         x_feature = x_feature.permute(0, 2, 1, 3).contiguous()
         x_res = torch.reshape(x_feature, (B, N*T, self.model_dim))
         llm_prompt_out = self.llm_model(inputs_embeds=prompt_embeddings).last_hidden_state
