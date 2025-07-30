@@ -5,10 +5,7 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 @dataclass
 class TokenizerConfig:
-    """
-    This class holds all the configuration parameters to be used
-    by ``ChronosTokenizer`` and ``ChronosModel``.
-    """
+   
 
     tokenizer_class: str
     tokenizer_kwargs: Dict[str, Any]
@@ -33,66 +30,18 @@ class TokenizerConfig:
 
 
 class ChronosTokenizer:
-    """
-    A ``ChronosTokenizer`` definines how time series are mapped into token IDs
-    and back.
-
-    For details, see the ``input_transform`` and ``output_transform`` methods,
-    which concrete classes must implement.
-    """
+ 
 
     def input_transform(
             self, context: torch.Tensor
     ) -> Tuple[torch.Tensor, torch.Tensor, Any]:
-        """
-        Turn a batch of time series into token IDs, attention map, and scale.
-
-        Parameters
-        ----------
-        context
-            A tensor shaped (batch_size, time_length), containing the
-            timeseries to forecast. Use left-padding with ``torch.nan``
-            to align time series of different lengths.
-
-        Returns
-        -------
-        token_ids
-            A tensor of integers, shaped (batch_size, time_length + 1)
-            if ``config.use_eos_token`` and (batch_size, time_length)
-            otherwise, containing token IDs for the input series.
-        attention_mask
-            A boolean tensor, same shape as ``token_ids``, indicating
-            which input observations are not ``torch.nan`` (i.e. not
-            missing nor padding).
-        tokenizer_state
-            An object that will be passed to ``output_transform``.
-            Contains the relevant context to decode output samples into
-            real values, such as location and scale parameters.
-        """
+      
         raise NotImplementedError()
 
     def output_transform(
             self, samples: torch.Tensor, tokenizer_state: Any
     ) -> torch.Tensor:
-        """
-        Turn a batch of sample token IDs into real values.
-
-        Parameters
-        ----------
-        samples
-            A tensor of integers, shaped (batch_size, num_samples, time_length),
-            containing token IDs of sample trajectories.
-        tokenizer_state
-            An object returned by ``input_transform`` containing
-            relevant context to decode samples, such as location and scale.
-            The nature of this depends on the specific tokenizer.
-
-        Returns
-        -------
-        forecasts
-            A real tensor, shaped (batch_size, num_samples, time_length),
-            containing forecasted sample paths.
-        """
+      
         raise NotImplementedError()
 
 
@@ -133,8 +82,6 @@ class MeanScaleUniformBins(ChronosTokenizer):
                 torch.bucketize(
                     input=scaled_context,
                     boundaries=self.boundaries,
-                    # buckets are open to the right, see:
-                    # https://pytorch.org/docs/2.1/generated/torch.bucketize.html#torch-bucketize
                     right=True,
                 )
                 + self.config.n_special_tokens
