@@ -37,11 +37,7 @@ class CrossModal(nn.Module):
 
     def forward(self, q: Tensor, k: Tensor, v: Tensor, key_padding_mask: Optional[Tensor] = None,
                 attn_mask: Optional[Tensor] = None):
-        '''
-        q  [bs * nvars x (text_num) x d_model]
-        k  [bs * nvars x (text_num) x d_model]
-        v  [bs * nvars x (text_num) x d_model]
-        '''
+    
         scores = None
         # print(q.shape,k.shape,v.shape)
         if self.res_attention:
@@ -174,9 +170,7 @@ class _MultiheadAttention(nn.Module):
 
 
 class _ScaledDotProductAttention(nn.Module):
-    r"""Scaled Dot-Product Attention module (Attention is all you need by Vaswani et al., 2017) with optional residual attention from previous layer
-    (Realformer: Transformer likes residual attention by He et al, 2020) and locality self sttention (Vision Transformer for Small-Size Datasets
-    by Lee et al, 2021)"""
+
 
     def __init__(self, d_model, n_heads, attn_dropout=0., res_attention=False, lsa=False):
         super().__init__()
@@ -188,19 +182,7 @@ class _ScaledDotProductAttention(nn.Module):
 
 
     def forward(self, q:Tensor, k:Tensor, v:Tensor, prev:Optional[Tensor]=None, key_padding_mask:Optional[Tensor]=None, attn_mask:Optional[Tensor]=None):
-        '''
-        Input shape:
-            q               : [bs x n_heads x max_q_len x d_k]
-            k               : [bs x n_heads x d_k x seq_len]
-            v               : [bs x n_heads x seq_len x d_v]
-            prev            : [bs x n_heads x q_len x seq_len]
-            key_padding_mask: [bs x seq_len]
-            attn_mask       : [1 x seq_len x seq_len]
-        Output shape:
-            output:  [bs x n_heads x q_len x d_v]
-            attn   : [bs x n_heads x q_len x seq_len]
-            scores : [bs x n_heads x q_len x seq_len]
-        '''
+   
 
         # Scaled MatMul (q, k) - similarity scores for all pairs of positions in an input sequence
         attn_scores = torch.matmul(q, k) * self.scale      # attn_scores : [bs x n_heads x max_q_len x q_len]
